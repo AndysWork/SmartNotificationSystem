@@ -6,3 +6,4 @@
 /.vs
 /SmartNotificationService/.vs
 /SmartNotificationService/obj
+/SmartNotificationService/bin/Debug/net8.0
