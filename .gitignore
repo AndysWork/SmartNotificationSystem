@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/SmartNotificationSystem/FileContentIndex
+/.vs
+/SmartNotificationService/.vs
+/SmartNotificationService/obj
