@@ -1,9 +1,9 @@
 ﻿using RabbitMQ.Client;
-using SmartNotificationService.Services.Interface;
+using OrderService.Services.Interface;
 using System.Text;
 using System.Text.Json;
 
-namespace SmartNotificationService.Services.Implementation
+namespace OrderService.Services.Implementation
 {
     public class RabbitMqEventPublisher : IEventPublisher
     {

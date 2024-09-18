@@ -1,4 +1,4 @@
-﻿namespace SmartNotificationService.Services.Interface
+﻿namespace OrderService.Services.Interface
 {
     public interface IEventPublisher
     {

@@ -1,4 +1,4 @@
-﻿namespace SmartNotificationService.Models
+﻿namespace OrderService.Models
 {
     public class Order
     {

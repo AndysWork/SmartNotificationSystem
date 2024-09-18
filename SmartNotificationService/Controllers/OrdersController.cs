@@ -2,7 +2,7 @@
 using SmartNotificationService.Models;
 using SmartNotificationService.Services.Interface;
 
-namespace SmartNotificationService.Controllers
+namespace OrderService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

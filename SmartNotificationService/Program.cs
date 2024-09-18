@@ -1,6 +1,6 @@
+using OrderService.Services.Implementation;
+using OrderService.Services.Interface;
 using RabbitMQ.Client;
-using SmartNotificationService.Services.Implementation;
-using SmartNotificationService.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
