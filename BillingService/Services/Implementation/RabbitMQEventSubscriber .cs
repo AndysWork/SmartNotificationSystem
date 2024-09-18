@@ -5,6 +5,7 @@ using BillingService.Services.Interface;
 using RabbitMQ.Client.Events;
 using BillingService.Models;
 using BillingService.Data;
+using System.Threading.Channels;
 
 namespace BillingService.Services.Implementation
 {
@@ -42,7 +43,14 @@ namespace BillingService.Services.Implementation
                 context.Invoices.Add(invoice);
                 await context.SaveChangesAsync();
 
-                Console.WriteLine($"Invoice Generated! : {JsonSerializer.Serialize(invoice)}");
+                // Publishing invoice event to RabbitMQ
+                var invoiceEvent = JsonSerializer.Serialize(invoice);
+                var invoiceBody = Encoding.UTF8.GetBytes(invoiceEvent);
+
+                _channel.QueueDeclare(queue: "invoices", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                _channel.BasicPublish(exchange: "", routingKey: "invoices", basicProperties: null, body: invoiceBody);
+
+                Console.WriteLine($"Invoice saved and event published: {invoiceEvent}");
             };
 
             _channel.BasicConsume(queue: "orders", autoAck: true, consumer: consumer);
