@@ -4,10 +4,11 @@ using System.Text.Json;
 using BillingService.Services.Interface;
 using RabbitMQ.Client.Events;
 using BillingService.Models;
+using BillingService.Data;
 
 namespace BillingService.Services.Implementation
 {
-    public class RabbitMqEventSubscriber(IConnection connection) : IEventSubscriber
+    public class RabbitMqEventSubscriber(IConnection connection, IServiceScopeFactory serviceScopeFactory) : IEventSubscriber
     {
         private readonly IConnection _connection = connection;
 
@@ -18,7 +19,7 @@ namespace BillingService.Services.Implementation
 
             var consumer = new EventingBasicConsumer(_channel);
 
-            consumer.Received += (model, ea) =>
+            consumer.Received += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
@@ -26,6 +27,8 @@ namespace BillingService.Services.Implementation
 
                 if (order == null)
                     return;
+                using var scope = serviceScopeFactory.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<BillingDbContext>();
 
                 var invoice = new Invoice
                 {
@@ -36,6 +39,9 @@ namespace BillingService.Services.Implementation
                     Price = order.Price,
                     CreatedAt = DateTime.UtcNow
                 };
+                context.Invoices.Add(invoice);
+                await context.SaveChangesAsync();
+
                 Console.WriteLine($"Invoice Generated! : {JsonSerializer.Serialize(invoice)}");
             };
 

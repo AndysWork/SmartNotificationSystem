@@ -1,8 +1,15 @@
+using BillingService.Data;
 using BillingService.Services.Implementation;
 using BillingService.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<BillingDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.AddSingleton(sp =>
 {
