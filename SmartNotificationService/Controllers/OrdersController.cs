@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SmartNotificationService.Models;
-using SmartNotificationService.Services.Interface;
+using OrderService.Models;
+using OrderService.Services.Interface;
 
 namespace OrderService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class OrdersController(IEventPublisher eventPublisher) : ControllerBase
     {
-        private readonly IEventPublisher _eventPublisher;
-
-        public OrdersController(IEventPublisher eventPublisher) => _eventPublisher = eventPublisher;
+        private readonly IEventPublisher _eventPublisher = eventPublisher;
 
         [HttpPost]
         public IActionResult CreateOrder([FromBody] Order order)
