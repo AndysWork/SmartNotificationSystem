@@ -5,14 +5,9 @@ using System.Text.Json;
 
 namespace OrderService.Services.Implementation
 {
-    public class RabbitMqEventPublisher : IEventPublisher
+    public class RabbitMqEventPublisher(IConnection connection) : IEventPublisher
     {
-        private readonly IConnection _connection;
-
-        public RabbitMqEventPublisher(IConnection connection)
-        {
-            _connection = connection;
-        }
+        private readonly IConnection _connection = connection;
 
         public void Publish<T>(T @event)
         {

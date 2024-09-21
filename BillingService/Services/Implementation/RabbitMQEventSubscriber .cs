@@ -40,17 +40,27 @@ namespace BillingService.Services.Implementation
                     Price = order.Price,
                     CreatedAt = DateTime.UtcNow
                 };
-                context.Invoices.Add(invoice);
-                await context.SaveChangesAsync();
+                try
+                {
+                    context.Invoices.Add(invoice);
+                    await context.SaveChangesAsync();
 
-                // Publishing invoice event to RabbitMQ
-                var invoiceEvent = JsonSerializer.Serialize(invoice);
-                var invoiceBody = Encoding.UTF8.GetBytes(invoiceEvent);
-
-                _channel.QueueDeclare(queue: "invoices", durable: false, exclusive: false, autoDelete: false, arguments: null);
-                _channel.BasicPublish(exchange: "", routingKey: "invoices", basicProperties: null, body: invoiceBody);
-
-                Console.WriteLine($"Invoice saved and event published: {invoiceEvent}");
+                    // Publish invoice event to RabbitMQ
+                    var invoiceEvent = JsonSerializer.Serialize(invoice);
+                    var invoiceBody = Encoding.UTF8.GetBytes(invoiceEvent);
+                    _channel.QueueDeclare(queue: "invoices", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                    _channel.BasicPublish(exchange: "", routingKey: "invoices", basicProperties: null, body: invoiceBody);
+                    Console.WriteLine($"Invoice saved and event published: {invoiceEvent}");
+                }
+                catch (Exception ex)
+                {
+                    // Publish compensation event
+                    var compensationEvent = JsonSerializer.Serialize(new Compensation { OrderId = order.Id });
+                    var compensationBody = Encoding.UTF8.GetBytes(compensationEvent);
+                    _channel.QueueDeclare(queue: "compensations", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                    _channel.BasicPublish(exchange: "", routingKey: "compensations", basicProperties: null, body: compensationBody);
+                    Console.WriteLine($"Error saving invoice, compensation event published: {compensationEvent}");
+                }
             };
 
             _channel.BasicConsume(queue: "orders", autoAck: true, consumer: consumer);

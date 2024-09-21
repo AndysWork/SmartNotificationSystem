@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using OrderService.Data;
 using OrderService.Services.Implementation;
 using OrderService.Services.Interface;
 using RabbitMQ.Client;
@@ -5,6 +7,10 @@ using RabbitMQ.Client;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<OrderDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.AddSingleton(sp =>
 {
