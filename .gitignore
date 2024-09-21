@@ -13,3 +13,6 @@
 /NotificationService/bin/Debug/net8.0
 /SagaOrchestrator/obj
 /SagaOrchestrator/bin/Debug/net8.0
+/OrderService/.vs/SmartNotificationService
+/OrderService/bin/Debug/net8.0
+/OrderService/obj
